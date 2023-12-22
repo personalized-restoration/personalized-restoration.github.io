@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Deformable Neural Radiance Fields creates free-viewpoint portraits (nerfies) from casually captured videos.">
+  <meta name="keywords" content="Nerfies, D-NeRF, NeRF">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Personalized Restoration via Dual-Pivot Tuning</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+
+  <!-- custom additional scripts -->
+
+  <link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- https://docs.mathjax.org/en/latest/web/configuration.html#configuration-using-an-in-line-script -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+  </script>
+
+  <script
+  defer
+  src="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/index.js"
+  ></script>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/styles.css"
+  />
+
+  <!-- swiper -->
+  <!-- https://swiperjs.com/demos -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+  <link rel="image_src" href="./media/pipeline.png">
+  
+  <!-- img comparison slider -->
+  <!-- https://github.com/sneas/img-comparison-slider -->
+  <style>
+    .before,
+    .after {
+      margin: 0;
+    }
+  
+    .before figcaption,
+    .after figcaption {
+      background: #fff;
+      border: 1px solid #c0c0c0;
+      border-radius: 4px;
+      color: #2e3452;
+      opacity: 0.8;
+      padding: 4px;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      line-height: 70%;
+    }
+  
+    .before figcaption {
+      left: 4px;
+    }
+  
+    .after figcaption {
+      right: 4px;
+    }
+  </style>
+  <script
+  defer
+  src="./static/js/image-comparison-slider.js"
+  ></script>
+  <link
+    rel="stylesheet"
+    href="./static/css/image-comparison-slider.css"
+  />
+
+</head>
+<body>
+
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Personalized Restoration via Dual-Pivot Tuning</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://pradyumnachari.github.io">Pradyumna Chari</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://sizhuoma.netlify.app">Sizhuo Ma</a><sup>2</sup>,</span>
+            <span class="author-block">
+              <a href="https://www.linkedin.com/in/danostashev">Daniil Ostashev</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://www.ee.ucla.edu/achuta-kadambi/">Achuta Kadambi</a><sup>1</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://www.linkedin.com/in/krishnanguru/">Gurunandan Krishnan</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://jianwang-cmu.github.io">Jian Wang</a><sup>2,*</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://kfiraberman.github.io">Kfir Aberman</a><sup>2</sup>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>University of California, Los Angeles,</span>
+            <span class="author-block"><sup>2</sup>Snap Inc. (<sup>*</sup> corr. author)</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://personalized-restoration.github.io"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- <span class="link-block">
+                <a href="https://arxiv.org/abs/2011.12948"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span> -->
+             
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://personalized-restoration.github.io"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code (Coming Soon)</span>
+                  </a>
+              </span>
+              
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img src="./static/images/teaser.gif"
+       class="interpolation-image"
+       alt="Interpolate start reference image."/>
+      <h2 class="subtitle has-text-centered">
+        TL;DR  With a few reference images of an individual, we personalize a diffusion prior within the context of a blind image restoration framework, resulting in a natural image that maintains high fidelity to the individual's identity and the attributes of the degraded image.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<!-- <div class="column is-3 has-text-centered">
+  <img src="./static/images/interpolate_start.jpg"
+       class="interpolation-image"
+       alt="Interpolate start reference image."/>
+  <p>Start Frame</p>
+</div> -->
+
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Generative diffusion models can serve as a prior which ensures that solutions of image restoration systems adhere to the manifold of natural images. However, for restoring facial images, a personalized prior is necessary to accurately represent and reconstruct unique facial features of a given individual. In this paper, we propose <b>Dual-Pivot Tuning</b> — a two-stage personalization approach for guided diffusion models that modifies the parameters of restoration system while maintaining the integrity of the prior and the distinct roles of each component. 
+Our key observation is that for optimal personalization, tuning the generative model around a text pivot alone is not enough. We therefore propose a second step to adjust the guiding network in a generic (non-personalized) manner, using the personalized generative model as a fixed "pivot".
+This approach ensures that personalization does not interfere with the restoration process, resulting in a natural appearance with high fidelity to the person's identity and the attributes of the degraded image. We evaluated our approach both qualitatively and quantitatively through extensive experiments with images of widely recognized individuals, comparing it against relevant baselines. Surprisingly, we found that our personalized prior not only achieves higher fidelity to identity but also outperform state-of-the-art generic priors in terms of general image quality.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+
+    <!-- Paper video.
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Video</h2>
+        <div class="publication-video">
+          <iframe src="https://www.youtube.com/embed/MrKrnHhk8IA?rel=0&amp;showinfo=0"
+                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div> -->
+    <!--/ Paper video. -->
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Personalized Face Restoration</h2>
+    <p>
+      Personalizing the restoration process enables high-fidelity restoration, 
+      while retaining accurate subject identity. We compare with a unconditional, non-personalized restoration method (DiffBIR). 
+      While the comparison method is able to restore the test images, significant identity drifts may be noted. Please move around the 
+      slider for better visualization.
+    </p>
+    
+    <p>
+      <br />
+    </p>
+        <div class="columns is-centered">
+
+          <div class="column">
+            <div>
+              <p style="text-align: center;">Input image (degraded). </p>
+              <p>
+                <br />
+              </p>
+
+              <img src="./static/images/big_results/C_10_4_og.png"
+                class="interpolation-image"
+                alt="Interpolate start reference image."/>
+            </div>
+            </div>
+
+          <div class="column">
+            <div>
+              <p style="text-align: center;">Restored Image: unconditional (left), ours (right).</p>
+              <img-comparison-slider>
+                <figure slot="first" class="before">
+                  <img width="100%" src="./static/images/big_results/C_10_4_diffbir.png">
+                  <!-- <figcaption>Unconditional</figcaption> -->
+                </figure>
+                <figure slot="second" class="after">
+                  <img width="100%" src="./static/images/big_results/C_10_4_ours.png">
+                  <!-- <figcaption>Personalized (Ours)</figcaption> -->
+              </img-comparison-slider>
+            </div>
+          </div>
+
+          <div class="column">
+              <div>
+                <p style="text-align: center;">Identity reference for the restored image.</p>
+                <img src="./static/images/big_results/C_10_4_ref.png"
+                  class="interpolation-image"
+                  alt="Interpolate start reference image."/>
+              </div>
+          </div>
+
+        </div>
+
+
+
+        <div class="columns is-centered">
+
+          <div class="column">
+            <div>
+              <!-- <p style="text-align: center;">An input degraded image, that we wish to restore.</p> -->
+
+              <img src="./static/images/big_results/B_0_4_og.png"
+                class="interpolation-image"
+                alt="Interpolate start reference image."/>
+            </div>
+            </div>
+
+          <div class="column">
+            <div>
+              <!-- <p style="text-align: center;">Restored Image: unconditional (left), ours (right).</p> -->
+              <img-comparison-slider>
+                <figure slot="first" class="before">
+                  <img width="100%" src="./static/images/big_results/B_0_4_diffbir.png">
+                  <!-- <figcaption>Unconditional</figcaption> -->
+                </figure>
+                <figure slot="second" class="after">
+                  <img width="100%" src="./static/images/big_results/B_0_4_ours.png">
+                  <!-- <figcaption>Personalized (Ours)</figcaption> -->
+              </img-comparison-slider>
+            </div>
+          </div>
+
+          <div class="column">
+              <div>
+                <!-- <p style="text-align: center;">Identity reference for the restored image.</p> -->
+                <img src="./static/images/big_results/B_0_4_ref.png"
+                  class="interpolation-image"
+                  alt="Interpolate start reference image."/>
+              </div>
+          </div>
+
+        </div>
+
+
+
+        <div class="columns is-centered">
+
+          <div class="column">
+            <div>
+              <!-- <p style="text-align: center;">An input degraded image, that we wish to restore.</p> -->
+
+              <img src="./static/images/big_results/J_3_og.png"
+                class="interpolation-image"
+                alt="Interpolate start reference image."/>
+            </div>
+            </div>
+
+          <div class="column">
+            <div>
+              <!-- <p style="text-align: center;">Restored Image: unconditional (left), ours (right).</p> -->
+              <img-comparison-slider>
+                <figure slot="first" class="before">
+                  <img width="100%" src="./static/images/big_results/J_3_diffbir.png">
+                  <!-- <figcaption>Unconditional</figcaption> -->
+                </figure>
+                <figure slot="second" class="after">
+                  <img width="100%" src="./static/images/big_results/J_3_ours.png">
+                  <!-- <figcaption>Personalized (Ours)</figcaption> -->
+              </img-comparison-slider>
+            </div>
+          </div>
+
+          <div class="column">
+              <div>
+                <!-- <p style="text-align: center;">Identity reference for the restored image.</p> -->
+                <img src="./static/images/big_results/J_3_ref.png"
+                  class="interpolation-image"
+                  alt="Interpolate start reference image."/>
+              </div>
+          </div>
+
+        </div>
+
+
+
+
+        <div class="columns is-centered">
+
+          <div class="column">
+            <div>
+              <!-- <p style="text-align: center;">An input degraded image, that we wish to restore.</p> -->
+
+              <img src="./static/images/big_results/C_2_og.png"
+                class="interpolation-image"
+                alt="Interpolate start reference image."/>
+            </div>
+            </div>
+
+          <div class="column">
+            <div>
+              <!-- <p style="text-align: center;">Restored Image: unconditional (left), ours (right).</p> -->
+              <img-comparison-slider>
+                <figure slot="first" class="before">
+                  <img width="100%" src="./static/images/big_results/C_2_diffbir.png">
+                  <!-- <figcaption>Unconditional</figcaption> -->
+                </figure>
+                <figure slot="second" class="after">
+                  <img width="100%" src="./static/images/big_results/C_2_ours.png">
+                  <!-- <figcaption>Personalized (Ours)</figcaption> -->
+              </img-comparison-slider>
+            </div>
+          </div>
+
+          <div class="column">
+              <div>
+                <!-- <p style="text-align: center;">Identity reference for the restored image.</p> -->
+                <img src="./static/images/big_results/C_2_ref.png"
+                  class="interpolation-image"
+                  alt="Interpolate start reference image."/>
+              </div>
+          </div>
+
+        </div>
+
+  </div>
+</section>
+
+
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Proposed Method</h2>
+    <img src="./static/images/scheme.png"
+       class="interpolation-image"
+       alt="Interpolate start reference image."/>
+    
+    <p>
+      Our dual-pivot tuning approach aims to personalize a blind face restoration system (left) and consists of two main steps: 
+      (1) <strong>Textual pivoting</strong>- fine-tuning the generative prior <strong>G</strong> within the context of the system to leverage conditioning 
+      cues from <strong>E</strong>, and (2) <strong>Model-based pivoting</strong>- adjusting <strong>E</strong> while freezing <strong>G</strong> in order align behavior to account for the strong personalized prior. Then, at inference 
+      time, our system embeds the personalized prior and can generate output images with high fidelity to the 
+      individual appearing in the reference images.
+    </p>
+    <p>
+      <br />
+    </p>
+    <h2 class="title is-3">Understanding Personalization Strategies</h2>
+        <div class="columns is-centered">
+
+          <div class="column">
+            <div>
+              <p style="text-align: center;">Input image (degraded).</p>
+
+              <img src="./static/images/pers_compare/T_3_6.png"
+                class="interpolation-image"
+                alt="Interpolate start reference image."/>
+            </div>
+            </div>
+
+          <div class="column">
+            <div>
+              <p style="text-align: center;">Unpersonalized (DiffBIR).</p>
+              <img-comparison-slider>
+                <figure slot="first" class="before">
+                  <img width="100%" src="./static/images/pers_compare/T_3_6_diffbir.png">
+                  <!-- <figcaption>Unconditional</figcaption> -->
+                </figure>
+                <figure slot="second" class="after">
+                  <img width="100%" src="./static/images/pers_compare/T_3_6_ours.png">
+                  <!-- <figcaption>Personalized (Ours)</figcaption> -->
+              </img-comparison-slider>
+            </div>
+          </div>
+
+          <div class="column">
+            <div>
+              <p style="text-align: center;">Only text-based pivoting.</p>
+              <img-comparison-slider>
+                <figure slot="first" class="before">
+                  <img width="100%" src="./static/images/pers_compare/T_3_6_onlyDreamBoothDiffBIR.png">
+                  <!-- <figcaption>Unconditional</figcaption> -->
+                </figure>
+                <figure slot="second" class="after">
+                  <img width="100%" src="./static/images/pers_compare/T_3_6_ours.png">
+                  <!-- <figcaption>Personalized (Ours)</figcaption> -->
+              </img-comparison-slider>
+            </div>
+          </div>
+
+          <div class="column">
+            <div>
+              <p style="text-align: center;">Only model-based pivoting.</p>
+              <img-comparison-slider>
+                <figure slot="first" class="before">
+                  <img width="100%" src="./static/images/pers_compare/T_3_6_onlyEnc.png">
+                  <!-- <figcaption>Unconditional</figcaption> -->
+                </figure>
+                <figure slot="second" class="after">
+                  <img width="100%" src="./static/images/pers_compare/T_3_6_ours.png">
+                  <!-- <figcaption>Personalized (Ours)</figcaption> -->
+              </img-comparison-slider>
+            </div>
+          </div>
+
+          <div class="column">
+              <div>
+                <p style="text-align: center;">Identity reference for the restored image.</p>
+                <img src="./static/images/pers_compare/T_3_6_gt.png"
+                  class="interpolation-image"
+                  alt="Interpolate start reference image."/>
+              </div>
+          </div>
+
+        </div>
+
+        <p>
+          We compare our proposed dual-pivot tuning based personalization strategy (inage on right in slider panels) 
+          with baseline methods. Given a degraded face image as input, whose identity appears in the reference 
+          image, existing unpersonalized diffusion-based face image restoration (DiffBIR) is unable to retain identity. Only textual pivoting based personalization of the generative prior is insufficent as the face restoration 
+          model is unable to leverage the identity information. On the other hand, only model-based pivoting of <strong>E</strong> pivoted around <strong>G</strong>
+           leads to some injection of identity cues (see face structure and eyes), however accompanied by a loss of high-frequency detail. Our method is able to significantly inject identity information 
+          into the restoration process, without losing the general image prior.
+        </p>
+
+
+
+
+
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <div class="columns is-centered">
+
+      <!-- Text-Guided Editing. -->
+      <div class="column">
+        <div class="content">
+          <h2 class="title is-3">Text-Guided Editing</h2>
+          <p>
+            Our use of text anchoring (as opposed to prior unconditional models) enables 
+            text-guided editing. Using prompts modifiers such as "smiling", "blue eyes", "green eyes" and "yellow eyes" enables 
+            relevant editing along with the restoration (please zoom in to the page to examine).
+          </p>
+          <img src="./static/images/pers_text_editing.png"
+            class="interpolation-image"
+            alt="Interpolate start reference image."/>
+        </div>
+      </div>
+      <!--/ Text-Guided Editing. -->
+
+      <!-- Face Swap. -->
+      <div class="column">
+        <h2 class="title is-3">Face Swap</h2>
+        <div class="columns is-centered">
+          <div class="column content">
+            <p>
+              We can leverage personalized models as a means for tasks such as face swapping.
+              An input image can be blurred, and then simply restored with the personalized model 
+              for a different identity to enable this effect.
+            </p>
+            <img src="./static/images/pers_face_swap.png"
+            class="interpolation-image"
+            alt="Interpolate start reference image."/>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!--/ Face Swap. -->
+
+
+
+
+
+  </div>
+</section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{chari2023personalized,
+  author    = {Chari, Pradyumna and Ma, Sizhuo and Ostashev, Daniil and Kadambi, Achuta and Krishnan, Gurunandan and Wang, Jian and Aberman, Kfir},
+  title     = {Contextual Personalization of Diffusion Priors for Identity-Aware Face Image Restoration},
+  journal   = {Arxiv},
+  year      = {2023},
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            Source code for this website is borrowed from <a
+              href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
